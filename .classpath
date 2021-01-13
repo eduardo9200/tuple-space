@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-14">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/asm-3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/asm-commons-3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/browser.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/checkconfigurationfile.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/checkser.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/classdep.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/classserver.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/computedigest.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/computehttpmdcodebase.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/destroy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/envcheck.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/extra.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/fiddler.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/group.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jarwrapper.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jini-core.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jini-ext.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jsk-debug-policy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jsk-lib.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jsk-platform.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/jsk-resources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/mahalo.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/mercury.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/norm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/outrigger.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/outrigger-snaplogstore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/phoenix.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/phoenix-group.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/phoenix-init.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/preferredlistgen.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/reggie.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/serviceui.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/sharedvm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/start.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/sun-util.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib/tools.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/browser-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/fiddler-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/group-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/jsk-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/mahalo-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/mercury-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/norm-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/outrigger-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/phoenix-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/reggie-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-dl/sdm-dl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/eduardo.maia/Desktop/ApacheRiver.zip (Unzipped Files)-20210111T150309Z-001/ApacheRiver.zip (Unzipped Files)/river/lib-ext/jsk-policy.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
