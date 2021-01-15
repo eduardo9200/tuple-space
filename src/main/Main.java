@@ -2,10 +2,8 @@ package main;
 
 import java.util.Scanner;
 
+import commons.Service;
 import net.jini.space.JavaSpace;
-import tupla.Ceu;
-import tupla.Host;
-import tupla.Nuvem;
 
 public class Main {
 
@@ -35,49 +33,32 @@ public class Main {
 				}
 				
 				if(message.contains("insert cloud")) {
-					String[] partes = message.split(" "); //['insert', 'cloud', 'nomeNuvem']
-					
-					Nuvem nuvem = new Nuvem();
-					nuvem.nome = partes[2];
-					
-					Ceu ceu = new Ceu();
-					ceu.nuvem = nuvem;
-					ceu.host = null;
-					ceu.vm = null;
-					ceu.processo = null;
-					
-					space.write(ceu, null, 60 * 1000);
+					Service.createNuvem(message, space);
 				
 				} else if(message.contains("insert host")) {
-					String[] partes = message.split(" "); //['insert', 'host', 'nomeHost', 'in', 'nomeNuvem']
+					Service.createHost(message, space);
+				
+				} else if(message.contains("insert vm")) {
+					Service.createVM(message, space);
+				
+				} else if(message.contains("insert process")) {
+					Service.createProcesso(message, space);
+				
+				} else if(message.contains("remove cloud")) {
 					
-					Nuvem nuvem = new Nuvem();
-					nuvem.nome = partes[4];
+				} else if(message.contains("remove host")) {
 					
-					Host host = new Host();
-					host.nome = partes[2];
+				} else if(message.contains("remove vm")) {
 					
-					Ceu template = new Ceu();
-					template.nuvem = nuvem;
-					template.host = host;
-
-					Ceu ceu = (Ceu) space.read(template, null, 10 * 1000);
+				} else if(message.contains("remove process")) {
 					
-					if(ceu != null) {
-						System.out.println("O host já existe");
-					} else {
-						Ceu ceu1 = new Ceu();
-						ceu1.nuvem = nuvem;
-						
-						Ceu ceu2 = (Ceu) space.read(ceu1, null, 10 * 1000);
-						
-						if(ceu2 == null) {
-							System.out.println("A nuvem informada não existe");
-						
-						} else {
-							space.write(template, null, 60 * 1000);							
-						}
-					}
+				} else if(message.contains("migrate host")) {
+					
+				} else if(message.contains("migrate vm")) {
+					
+				} else if(message.contains("migrate process")) {
+					
+				} else if(message.contains("message")) {
 					
 				}
 				
