@@ -2,8 +2,8 @@ package main;
 
 import java.util.Scanner;
 
-import commons.Service;
 import net.jini.space.JavaSpace;
+import services.Service;
 
 public class Main {
 
@@ -33,16 +33,16 @@ public class Main {
 				}
 				
 				if(message.contains("insert cloud")) {
-					Service.createNuvem(message, space);
+					Service.createNuvem(message, space, null);
 				
 				} else if(message.contains("insert host")) {
-					Service.createHost(message, space);
+					Service.createHost(message, space, null);
 				
 				} else if(message.contains("insert vm")) {
-					Service.createVM(message, space);
+					Service.createVM(message, space, null);
 				
 				} else if(message.contains("insert process")) {
-					Service.createProcesso(message, space);
+					Service.createProcesso(message, space, null);
 				
 				} else if(message.contains("remove cloud")) {
 					

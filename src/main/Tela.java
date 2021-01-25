@@ -6,10 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import commons.Service;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
+import services.Service;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,6 +22,7 @@ import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.HeadlessException;
 
 public class Tela extends JFrame {
 
@@ -277,8 +278,8 @@ public class Tela extends JFrame {
 		System.out.println("Insere Nuvem");
 		String nomeNuvem = JOptionPane.showInputDialog(this, "Nome da Nuvem", "Nuvem", JOptionPane.QUESTION_MESSAGE);
 		try {
-			Service.createNuvem(nomeNuvem, space);
-		} catch (RemoteException | TransactionException e1) {
+			Service.createNuvem(nomeNuvem, space, this);
+		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -287,7 +288,7 @@ public class Tela extends JFrame {
 		System.out.println("Insere Host");
 		String nomeHost = JOptionPane.showInputDialog(this, "Nome do Host", "Host", JOptionPane.QUESTION_MESSAGE);
 		try {
-			Service.createHost(nomeHost, space);
+			Service.createHost(nomeHost, space, this);
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -296,13 +297,21 @@ public class Tela extends JFrame {
 	private void btnNewVMActionPerformed(ActionEvent e) {
 		System.out.println("Insere VM");
 		String nomeVM = JOptionPane.showInputDialog(this, "Nome da VM", "VM", JOptionPane.QUESTION_MESSAGE);
-		Service.createVM(nomeVM, space);
+		try {
+			Service.createVM(nomeVM, space, this);
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnNewProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Insere Processo");
 		String nomeProcesso = JOptionPane.showInputDialog(this, "Nome do Processo", "Processo", JOptionPane.QUESTION_MESSAGE);
-		Service.createProcesso(nomeProcesso, space);
+		try {
+			Service.createProcesso(nomeProcesso, space, this);
+		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnRemoveNuvemActionPerformed(ActionEvent e) {
