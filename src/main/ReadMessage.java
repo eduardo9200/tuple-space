@@ -1,7 +1,7 @@
 package main;
 
 import net.jini.space.JavaSpace;
-import tupla.Ceu;
+import tupla.Space;
 import view.View;
 
 public class ReadMessage {
@@ -22,8 +22,8 @@ public class ReadMessage {
 			System.out.println(space);
 			
 			while(true) {
-				Ceu template = new Ceu();
-				Ceu ceu = (Ceu) space.take(template, null, 60 * 1000);
+				Space template = new Space();
+				Space ceu = (Space) space.take(template, null, 60 * 1000);
 				
 				if(ceu == null) {
 					System.out.println("Tempo de espera esgotado. Encerrando...");

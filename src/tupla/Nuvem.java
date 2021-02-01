@@ -9,4 +9,8 @@ public class Nuvem implements Entry {
 	public String nome;
 	
 	public Nuvem() { }
+	
+	public Nuvem(String nome) {
+		this.nome = nome;
+	}
 }

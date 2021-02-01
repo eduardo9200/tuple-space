@@ -9,7 +9,10 @@ import javax.swing.border.EmptyBorder;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
+import services.ReloadSpaceService;
 import services.Service;
+import tupla.Nuvem;
+import tupla.Space;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
@@ -29,6 +34,7 @@ public class Tela extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JavaSpace space;
+	private List<Nuvem> nuvens;
 	
 	private JPanel contentPane;
 	
@@ -48,6 +54,7 @@ public class Tela extends JFrame {
 	private JButton btnMoverHost;
 	private JButton btnMoverVM;
 	private JButton btnMoverProcesso;
+	private JButton btnAtualizar;
 	
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
@@ -75,7 +82,7 @@ public class Tela extends JFrame {
 	 */
 	public Tela() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 525);
+		setBounds(100, 100, 450, 560);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -171,6 +178,10 @@ public class Tela extends JFrame {
 		lblNewLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
 		lblNewLabel.setBounds(10, 11, 133, 19);
 		contentPane.add(lblNewLabel);
+		
+		btnAtualizar = new JButton("Atualizar");
+		btnAtualizar.setBounds(335, 486, 89, 23);
+		contentPane.add(btnAtualizar);
 	}
 	
 	private void initActions() {
@@ -239,6 +250,12 @@ public class Tela extends JFrame {
 				btnMoverProcessoActionPerformed(e);
 			}
 		});
+		
+		btnAtualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnAtualizarActionPerformed(e);
+			}
+		});
 	}
 	
 	private void instanciaEspacoTupla() {
@@ -275,10 +292,17 @@ public class Tela extends JFrame {
 	}
 	
 	private void btnNewCloudActionPerformed(ActionEvent e) {
-		System.out.println("Insere Nuvem");
+		System.out.println("Inserindo Nuvem");
 		String nomeNuvem = JOptionPane.showInputDialog(this, "Nome da Nuvem", "Nuvem", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeNuvem == null || nomeNuvem.isEmpty() || nomeNuvem.isBlank()) {
+			return;
+		}
+		
 		try {
 			Service.createNuvem(nomeNuvem, space, this);
+			this.nuvens.add(new Nuvem(nomeNuvem));
+			System.out.println("Nuvem criada: " + nomeNuvem);
 		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -287,8 +311,14 @@ public class Tela extends JFrame {
 	private void btnNewHostActionPerformed(ActionEvent e) {
 		System.out.println("Insere Host");
 		String nomeHost = JOptionPane.showInputDialog(this, "Nome do Host", "Host", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeHost == null || nomeHost.isEmpty() || nomeHost.isBlank()) {
+			return;
+		}
+		
 		try {
 			Service.createHost(nomeHost, space, this);
+			System.out.println("Host criado: " + nomeHost);
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -297,8 +327,14 @@ public class Tela extends JFrame {
 	private void btnNewVMActionPerformed(ActionEvent e) {
 		System.out.println("Insere VM");
 		String nomeVM = JOptionPane.showInputDialog(this, "Nome da VM", "VM", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeVM == null || nomeVM.isEmpty() || nomeVM.isBlank()) {
+			return;
+		}
+		
 		try {
 			Service.createVM(nomeVM, space, this);
+			System.out.println("VM criada: " + nomeVM);
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -307,8 +343,14 @@ public class Tela extends JFrame {
 	private void btnNewProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Insere Processo");
 		String nomeProcesso = JOptionPane.showInputDialog(this, "Nome do Processo", "Processo", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeProcesso == null || nomeProcesso.isEmpty() || nomeProcesso.isBlank()) {
+			return;
+		}
+		
 		try {
 			Service.createProcesso(nomeProcesso, space, this);
+			System.out.println("Processo criado: " + nomeProcesso);
 		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -316,30 +358,145 @@ public class Tela extends JFrame {
 	
 	private void btnRemoveNuvemActionPerformed(ActionEvent e) {
 		System.out.println("Remove Nuvem");
+		
+		String nomeNuvem = JOptionPane.showInputDialog(this, "Nome da Nuvem", "Nuvem", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeNuvem == null || nomeNuvem.isEmpty() || nomeNuvem.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.removeNuvem(nomeNuvem, space, this);
+			this.nuvens.remove(new Nuvem(nomeNuvem));
+			System.out.println("Nuvem removida: " + nomeNuvem);
+		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnRemoveHostActionPerformed(ActionEvent e) {
 		System.out.println("Remove Host");
+		String nomeHost = JOptionPane.showInputDialog(this, "Nome do Host", "Host", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeHost == null || nomeHost.isEmpty() || nomeHost.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.removeHost(nomeHost, space, this);
+			System.out.println("Host removido: " + nomeHost);
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnRemoveVMActionPerformed(ActionEvent e) {
 		System.out.println("Remove VM");
+		String nomeVM = JOptionPane.showInputDialog(this, "Nome da VM", "VM", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeVM == null || nomeVM.isEmpty() || nomeVM.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.removeVM(nomeVM, space, this);
+			System.out.println("VM removida: " + nomeVM);
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnRemoveProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Remove Processo");
+		String nomeProcesso = JOptionPane.showInputDialog(this, "Nome do Processo", "Processo", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeProcesso == null || nomeProcesso.isEmpty() || nomeProcesso.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.removeProcesso(nomeProcesso, space, this);
+			System.out.println("Processo removido: " + nomeProcesso);
+		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnMoverHostActionPerformed(ActionEvent e) {
 		System.out.println("Mover Host");
+		String nomeHostOrigem = JOptionPane.showInputDialog(this, "Nome do host de origem", "Host origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeHostDestino = JOptionPane.showInputDialog(this, "Nome do host de destino", "Host destino", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeHostOrigem == null || nomeHostOrigem.isEmpty() || nomeHostOrigem.isBlank() || nomeHostDestino == null || nomeHostDestino.isEmpty() || nomeHostDestino.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.moveHost(nomeHostOrigem, nomeHostDestino, space, this);
+			System.out.println("Host movido com sucesso!");
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnMoverVMActionPerformed(ActionEvent e) {
 		System.out.println("Mover VM");
+		String nomeVMOrigem = JOptionPane.showInputDialog(this, "Nome da VM de origem", "VM origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeVMDestino = JOptionPane.showInputDialog(this, "Nome da VM de destino", "VM destino", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeVMOrigem == null || nomeVMOrigem.isEmpty() || nomeVMOrigem.isBlank() || nomeVMDestino == null || nomeVMDestino.isEmpty() || nomeVMDestino.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.moveHost(nomeVMOrigem, nomeVMDestino, space, this);
+			System.out.println("VM movida com sucesso!");
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void btnMoverProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Mover Processo");
+		String nomeProcessoOrigem = JOptionPane.showInputDialog(this, "Nome do processo de origem", "Processo origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeProcessoDestino = JOptionPane.showInputDialog(this, "Nome do processo de destino", "Processo destino", JOptionPane.QUESTION_MESSAGE);
+		
+		if(nomeProcessoOrigem == null || nomeProcessoOrigem.isEmpty() || nomeProcessoOrigem.isBlank() || nomeProcessoDestino == null || nomeProcessoDestino.isEmpty() || nomeProcessoDestino.isBlank()) {
+			return;
+		}
+		
+		try {
+			Service.moveHost(nomeProcessoOrigem, nomeProcessoDestino, space, this);
+			System.out.println("Processo movido com sucesso!");
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void btnAtualizarActionPerformed(ActionEvent e) {
+		try {
+			List<Space> todasTuplas = ReloadSpaceService.findAllTuples(nuvens, space);
+			
+			//todasTuplas.sort();
+			
+			for(Space tupla : todasTuplas) {
+				String modelo =
+						new StringBuilder()
+						.append("(")
+						.append(tupla.nuvem.nome).append(":")
+						.append(tupla.host.nome).append(":")
+						.append(tupla.vm.nome).append(":")
+						.append(tupla.processo.nome)
+						.append("<").append(tupla.processo.mensagem).append(">")
+						.append(")")
+						.toString();
+				
+				this.textArea.append(modelo + "\n");
+			}
+			
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	private void habilitaBotoes() {

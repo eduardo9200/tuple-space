@@ -32,33 +32,33 @@ public class Service {
 	}
 	
 	//REMOVE METHODS
-	public static void removeNuvem(String nome, JavaSpace space, Tela tela) {
+	public static void removeNuvem(String nome, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		RemoveService.removeNuvem(nome, space, tela);
 		return;
 	}
 	
-	public static void removeHost(String caminhoComNome, JavaSpace space, Tela tela) {
+	public static void removeHost(String caminhoComNome, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		RemoveService.removeHost(caminhoComNome, space, tela);
 		return;
 	}
 	
-	public static void removeVM(String caminhoComNome, JavaSpace space, Tela tela) {
+	public static void removeVM(String caminhoComNome, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		RemoveService.removeVM(caminhoComNome, space, tela);
 		return;
 	}
 	
-	public static void removeProcesso(String caminhoComNome, JavaSpace space, Tela tela) {
+	public static void removeProcesso(String caminhoComNome, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		RemoveService.removeProcesso(caminhoComNome, space, tela);
 		return;
 	}
 	
 	//MOVE METHODS
-	public static void moveHost(String from, String to, JavaSpace space, Tela tela) {
+	public static void moveHost(String from, String to, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		MoveService.moveHost(from, to, space, tela);
 		return;
 	}
 	
-	public static void moveVM(String from, String to, JavaSpace space, Tela tela) {
+	public static void moveVM(String from, String to, JavaSpace space, Tela tela) throws RemoteException, TransactionException, UnusableEntryException, InterruptedException {
 		MoveService.moveVM(from, to, space, tela);
 		return;
 	}
@@ -69,8 +69,8 @@ public class Service {
 	}
 	
 	//MESSAGING METHOD
-	public static void messagingBetweenProcess(String from, String to, JavaSpace space, Tela tela) {
-		MessagingService.messagingBetweenProcess(from, to, space, tela);
+	public static void messagingBetweenProcess(String from, String to, String mensagem, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
+		MessagingService.messagingBetweenProcess(from, to, mensagem, space, tela);
 		return;
 	}
 }
