@@ -16,6 +16,10 @@ public class ReloadSpaceService {
 	public static List<Space> findAllTuples(List<Nuvem> nuvens, JavaSpace space) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		List<Space> tuplas = new ArrayList<Space>();
 		
+		if(nuvens == null) {
+			return null;
+		}
+		
 		for(Nuvem nuvem : nuvens) {
 			Space template = new Space();
 			template.nuvem = nuvem;

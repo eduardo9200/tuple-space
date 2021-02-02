@@ -63,7 +63,7 @@ public class Service {
 		return;
 	}
 
-	public static void moveProcesso(String from, String to, JavaSpace space, Tela tela) {
+	public static void moveProcesso(String from, String to, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		MoveService.moveProcesso(from, to, space, tela);
 		return;
 	}

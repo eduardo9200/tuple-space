@@ -12,4 +12,5 @@ public class Space implements Entry {
 	public Processo processo;
 	
 	public Space() { }
+	
 }

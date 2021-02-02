@@ -11,8 +11,11 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
 import services.ReloadSpaceService;
 import services.Service;
+import tupla.Host;
 import tupla.Nuvem;
+import tupla.Processo;
 import tupla.Space;
+import tupla.VirtualMachine;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -21,6 +24,7 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -28,6 +32,11 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
+import java.awt.BorderLayout;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
 
 public class Tela extends JFrame {
 
@@ -36,12 +45,16 @@ public class Tela extends JFrame {
 	private JavaSpace space;
 	private List<Nuvem> nuvens;
 	
+	TuplasTableModel tableModel = new TuplasTableModel();
+	
 	private JPanel contentPane;
+	private JPanel panelTabela;
 	
 	private JLabel lblInserir;
 	private JLabel lblRemover;
 	private JLabel lblMover;
 	private JLabel lblLog;
+	private JLabel lblNewLabel;
 	
 	private JButton btnNewNuvem;
 	private JButton btnNewHost;
@@ -57,7 +70,10 @@ public class Tela extends JFrame {
 	private JButton btnAtualizar;
 	
 	private JScrollPane scrollPane;
+	private JScrollPane scrollPane_1;
+	
 	private JTextArea textArea;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -82,7 +98,7 @@ public class Tela extends JFrame {
 	 */
 	public Tela() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 560);
+		setBounds(100, 100, 750, 560);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -90,26 +106,24 @@ public class Tela extends JFrame {
 		
 		this.initComponents();
 		this.initActions();
+		
+		this.habilitaBotoes(true);
 	}
 	
 	private void initComponents() {
 		btnNewNuvem = new JButton("Nuvem");
-		btnNewNuvem.setEnabled(false);
 		btnNewNuvem.setBounds(44, 92, 89, 23);
 		contentPane.add(btnNewNuvem);
 		
 		btnNewHost = new JButton("Host");
-		btnNewHost.setEnabled(false);
 		btnNewHost.setBounds(44, 126, 89, 23);
 		contentPane.add(btnNewHost);
 		
 		btnNewVM = new JButton("VM");
-		btnNewVM.setEnabled(false);
 		btnNewVM.setBounds(44, 160, 89, 23);
 		contentPane.add(btnNewVM);
 		
 		btnNewProcesso = new JButton("Processo");
-		btnNewProcesso.setEnabled(false);
 		btnNewProcesso.setBounds(44, 194, 89, 23);
 		contentPane.add(btnNewProcesso);
 		
@@ -122,22 +136,18 @@ public class Tela extends JFrame {
 		contentPane.add(lblRemover);
 		
 		btnRemoveNuvem = new JButton("Nuvem");
-		btnRemoveNuvem.setEnabled(false);
 		btnRemoveNuvem.setBounds(169, 92, 89, 23);
 		contentPane.add(btnRemoveNuvem);
 		
 		btnRemoveHost = new JButton("Host");
-		btnRemoveHost.setEnabled(false);
 		btnRemoveHost.setBounds(169, 126, 89, 23);
 		contentPane.add(btnRemoveHost);
 		
 		btnRemoveVM = new JButton("VM");
-		btnRemoveVM.setEnabled(false);
 		btnRemoveVM.setBounds(169, 160, 89, 23);
 		contentPane.add(btnRemoveVM);
 		
 		btnRemoveProcesso = new JButton("Processo");
-		btnRemoveProcesso.setEnabled(false);
 		btnRemoveProcesso.setBounds(169, 194, 89, 23);
 		contentPane.add(btnRemoveProcesso);
 		
@@ -146,34 +156,31 @@ public class Tela extends JFrame {
 		contentPane.add(lblMover);
 		
 		btnMoverHost = new JButton("Host");
-		btnMoverHost.setEnabled(false);
 		btnMoverHost.setBounds(292, 107, 89, 23);
 		contentPane.add(btnMoverHost);
 		
 		btnMoverVM = new JButton("VM");
-		btnMoverVM.setEnabled(false);
 		btnMoverVM.setBounds(292, 141, 89, 23);
 		contentPane.add(btnMoverVM);
 		
 		btnMoverProcesso = new JButton("Processo");
-		btnMoverProcesso.setEnabled(false);
 		btnMoverProcesso.setBounds(292, 175, 89, 23);
 		contentPane.add(btnMoverProcesso);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 228, 414, 247);
+		scrollPane.setBounds(522, 228, 203, 247);
 		contentPane.add(scrollPane);
 		
 		textArea = new JTextArea();
-		textArea.setLineWrap(true);
 		scrollPane.setViewportView(textArea);
+		textArea.setLineWrap(true);
 		
 		lblLog = new JLabel("");
 		lblLog.setForeground(Color.MAGENTA);
 		lblLog.setBounds(10, 41, 414, 20);
 		contentPane.add(lblLog);
 		
-		JLabel lblNewLabel = new JLabel("Espa\u00E7o de Tuplas");
+		lblNewLabel = new JLabel("Espa\u00E7o de Tuplas");
 		lblNewLabel.setForeground(Color.BLUE);
 		lblNewLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
 		lblNewLabel.setBounds(10, 11, 133, 19);
@@ -182,6 +189,23 @@ public class Tela extends JFrame {
 		btnAtualizar = new JButton("Atualizar");
 		btnAtualizar.setBounds(335, 486, 89, 23);
 		contentPane.add(btnAtualizar);
+		
+		panelTabela = new JPanel();
+		panelTabela.setBounds(10, 228, 498, 247);
+		contentPane.add(panelTabela);
+		panelTabela.setLayout(null);
+		
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 11, 478, 225);
+		panelTabela.add(scrollPane_1);
+		
+		table = new JTable();
+		scrollPane_1.setViewportView(table);
+		table.setBorder(null);
+		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		
+		table.setModel(tableModel);
+		table.setAutoCreateRowSorter(true);
 	}
 	
 	private void initActions() {
@@ -271,7 +295,7 @@ public class Tela extends JFrame {
 			
 			this.lblLog.setText("O serviço JavaSpace foi encontrado.");
 			System.out.println(space);
-			this.habilitaBotoes();
+			this.habilitaBotoes(true);
 			
 			/*Scanner scanner = new Scanner(System.in);
 			
@@ -424,8 +448,8 @@ public class Tela extends JFrame {
 	
 	private void btnMoverHostActionPerformed(ActionEvent e) {
 		System.out.println("Mover Host");
-		String nomeHostOrigem = JOptionPane.showInputDialog(this, "Nome do host de origem", "Host origem", JOptionPane.QUESTION_MESSAGE);
-		String nomeHostDestino = JOptionPane.showInputDialog(this, "Nome do host de destino", "Host destino", JOptionPane.QUESTION_MESSAGE);
+		String nomeHostOrigem = JOptionPane.showInputDialog(this, "Nome do host de origem (nomeNuvem.nomeHost)", "Host origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeHostDestino = JOptionPane.showInputDialog(this, "Nome da nuvem de destino (nomeNuvem)", "Nuvem destino", JOptionPane.QUESTION_MESSAGE);
 		
 		if(nomeHostOrigem == null || nomeHostOrigem.isEmpty() || nomeHostOrigem.isBlank() || nomeHostDestino == null || nomeHostDestino.isEmpty() || nomeHostDestino.isBlank()) {
 			return;
@@ -441,15 +465,15 @@ public class Tela extends JFrame {
 	
 	private void btnMoverVMActionPerformed(ActionEvent e) {
 		System.out.println("Mover VM");
-		String nomeVMOrigem = JOptionPane.showInputDialog(this, "Nome da VM de origem", "VM origem", JOptionPane.QUESTION_MESSAGE);
-		String nomeVMDestino = JOptionPane.showInputDialog(this, "Nome da VM de destino", "VM destino", JOptionPane.QUESTION_MESSAGE);
+		String nomeVMOrigem = JOptionPane.showInputDialog(this, "Nome da VM de origem (nomeNuvem.nomeHost.nomeVM)", "VM origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeVMDestino = JOptionPane.showInputDialog(this, "Nome do Host de destino (nomeNuvem.nomeHost)", "Host destino", JOptionPane.QUESTION_MESSAGE);
 		
 		if(nomeVMOrigem == null || nomeVMOrigem.isEmpty() || nomeVMOrigem.isBlank() || nomeVMDestino == null || nomeVMDestino.isEmpty() || nomeVMDestino.isBlank()) {
 			return;
 		}
 		
 		try {
-			Service.moveHost(nomeVMOrigem, nomeVMDestino, space, this);
+			Service.moveVM(nomeVMOrigem, nomeVMDestino, space, this);
 			System.out.println("VM movida com sucesso!");
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
@@ -458,15 +482,15 @@ public class Tela extends JFrame {
 	
 	private void btnMoverProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Mover Processo");
-		String nomeProcessoOrigem = JOptionPane.showInputDialog(this, "Nome do processo de origem", "Processo origem", JOptionPane.QUESTION_MESSAGE);
-		String nomeProcessoDestino = JOptionPane.showInputDialog(this, "Nome do processo de destino", "Processo destino", JOptionPane.QUESTION_MESSAGE);
+		String nomeProcessoOrigem = JOptionPane.showInputDialog(this, "Nome do processo de origem (nomeNuvem.nomeHost.nomeVM.nomeProcesso)", "Processo origem", JOptionPane.QUESTION_MESSAGE);
+		String nomeProcessoDestino = JOptionPane.showInputDialog(this, "Nome da VM de destino (nomeNuvem.nomeHost.nomeVM)", "VM destino", JOptionPane.QUESTION_MESSAGE);
 		
 		if(nomeProcessoOrigem == null || nomeProcessoOrigem.isEmpty() || nomeProcessoOrigem.isBlank() || nomeProcessoDestino == null || nomeProcessoDestino.isEmpty() || nomeProcessoDestino.isBlank()) {
 			return;
 		}
 		
 		try {
-			Service.moveHost(nomeProcessoOrigem, nomeProcessoDestino, space, this);
+			Service.moveProcesso(nomeProcessoOrigem, nomeProcessoDestino, space, this);
 			System.out.println("Processo movido com sucesso!");
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
 			e1.printStackTrace();
@@ -475,23 +499,15 @@ public class Tela extends JFrame {
 	
 	private void btnAtualizarActionPerformed(ActionEvent e) {
 		try {
+			tableModel.clearAllRows();
+			
 			List<Space> todasTuplas = ReloadSpaceService.findAllTuples(nuvens, space);
 			
-			//todasTuplas.sort();
+			if(todasTuplas == null || todasTuplas.isEmpty())
+				return;
 			
 			for(Space tupla : todasTuplas) {
-				String modelo =
-						new StringBuilder()
-						.append("(")
-						.append(tupla.nuvem.nome).append(":")
-						.append(tupla.host.nome).append(":")
-						.append(tupla.vm.nome).append(":")
-						.append(tupla.processo.nome)
-						.append("<").append(tupla.processo.mensagem).append(">")
-						.append(")")
-						.toString();
-				
-				this.textArea.append(modelo + "\n");
+				tableModel.addRow(tupla);
 			}
 			
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
@@ -499,19 +515,19 @@ public class Tela extends JFrame {
 		}
 	}
 	
-	private void habilitaBotoes() {
-		this.btnNewNuvem.setEnabled(true);
-		this.btnNewHost.setEnabled(true);
-		this.btnNewVM.setEnabled(true);
-		this.btnNewProcesso.setEnabled(true);
+	private void habilitaBotoes(boolean b) {
+		this.btnNewNuvem.setEnabled(b);
+		this.btnNewHost.setEnabled(b);
+		this.btnNewVM.setEnabled(b);
+		this.btnNewProcesso.setEnabled(b);
 		
-		this.btnRemoveNuvem.setEnabled(true);
-		this.btnRemoveHost.setEnabled(true);
-		this.btnRemoveVM.setEnabled(true);
-		this.btnRemoveProcesso.setEnabled(true);
+		this.btnRemoveNuvem.setEnabled(b);
+		this.btnRemoveHost.setEnabled(b);
+		this.btnRemoveVM.setEnabled(b);
+		this.btnRemoveProcesso.setEnabled(b);
 		
-		this.btnMoverHost.setEnabled(true);
-		this.btnMoverVM.setEnabled(true);
-		this.btnMoverProcesso.setEnabled(true);
+		this.btnMoverHost.setEnabled(b);
+		this.btnMoverVM.setEnabled(b);
+		this.btnMoverProcesso.setEnabled(b);
 	}
 }
