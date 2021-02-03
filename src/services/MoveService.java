@@ -7,11 +7,13 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import exception.FalhaException;
 import main.Tela;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
+import services.CreateService.TipoInsercao;
 import tupla.Host;
 import tupla.Nuvem;
 import tupla.Processo;
@@ -21,7 +23,7 @@ import tupla.VirtualMachine;
 public class MoveService {
 	
 	private static final long TEMPO_VIDA_TUPLA = Lease.FOREVER;
-	private static final long TEMPO_MAX_LEITURA = 10_000; //10 seg.
+	private static final long TEMPO_MAX_LEITURA = 5_000; //5 seg.
 	
 	/**
 	 * 
@@ -30,7 +32,7 @@ public class MoveService {
 	 * @param space 
 	 * @param tela
 	 */
-	public static void moveHost(String from, String to, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
+	public static void moveHost(String from, String to, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino'];
 		
@@ -94,20 +96,31 @@ public class MoveService {
 					novoTemplate.vm = item.vm;
 					novoTemplate.processo = item.processo;
 					
-					space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+					CreateService.insereTuplaNoEspaco(novoTemplate, space, TipoInsercao.HOST);
+					//space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+				}
+				
+				//Salva os dados da origem sem o Host
+				Space tuplaOrigem = new Space();
+				tuplaOrigem.nuvem = nuvemOrigem;
+				
+				if(!ValidateService.existeNuvem(tuplaOrigem, space)) {
+					space.write(tuplaOrigem, null, TEMPO_VIDA_TUPLA);
 				}
 			
 				JOptionPane.showMessageDialog(tela, "Host transferido com sucesso!");
 				
 			} else {
-				JOptionPane.showMessageDialog(tela, "O host de origem ou a nuvem de destino não foi encontrada ou não existe. Verifique os nomes e tente novamente.");
+				JOptionPane.showMessageDialog(tela, "O host de origem ou a nuvem de destino não foi encontrado ou não existe. Verifique os nomes e tente novamente.");
+				throw new FalhaException("Host e/ou Nuvem não existente");
 			}
 		} else {
 			JOptionPane.showMessageDialog(tela, "Digite um nome válido para o host e/ou nuvem. Ex.: nuvem->nuvem; host->nuvem.host");
+			throw new FalhaException("Nome do Host e/ou da Nuvem inválido");
 		}
 	}
 	
-	public static void moveVM(String from, String to, JavaSpace space, Tela tela) throws RemoteException, TransactionException, UnusableEntryException, InterruptedException {
+	public static void moveVM(String from, String to, JavaSpace space, Tela tela) throws RemoteException, TransactionException, UnusableEntryException, InterruptedException, FalhaException {
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino'];
 		
@@ -180,20 +193,32 @@ public class MoveService {
 					novoTemplate.vm = vmDestino;
 					novoTemplate.processo = item.processo;
 					
-					space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+					CreateService.insereTuplaNoEspaco(novoTemplate, space, TipoInsercao.VM);
+					//space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+				}
+				
+				//Salva os dados da origem sem a VM
+				Space tuplaOrigem = new Space();
+				tuplaOrigem.nuvem = nuvemOrigem;
+				tuplaOrigem.host = hostOrigem;
+				
+				if(!ValidateService.existeHost(tuplaOrigem, space)) {
+					space.write(tuplaOrigem, null, TEMPO_VIDA_TUPLA);	
 				}
 			
 				JOptionPane.showMessageDialog(tela, "VM transferida com sucesso!");
 				
 			} else {
 				JOptionPane.showMessageDialog(tela, "A VM de origem ou o host de destino não foi encontrado ou não existe. Verifique os nomes e tente novamente.");
+				throw new FalhaException("VM e/ou Host não existente");
 			}
 		} else {
 			JOptionPane.showMessageDialog(tela, "Digite um nome válido para o host e/ou VM. Ex.: Host->nuvem.host; VM->nuvem.host.vm");
+			throw new FalhaException("Nome da VM e/ou do Host inválido");
 		}
 	}
 
-	public static void moveProcesso(String from, String to, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException {
+	public static void moveProcesso(String from, String to, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem', 3=>'nomeProcessoOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino', 2=>'nomeVMDestino'];
 		
@@ -274,17 +299,31 @@ public class MoveService {
 					novoTemplate.host = hostDestino;
 					novoTemplate.vm = vmDestino;
 					novoTemplate.processo = processoDestino;
-					
-					space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+				
+					CreateService.insereTuplaNoEspaco(novoTemplate, space, TipoInsercao.PROCESSO);
+					//space.write(novoTemplate, null, TEMPO_VIDA_TUPLA);
+				}
+				
+				//Salva os dados da origem sem o Processo
+				Space tuplaOrigem = new Space();
+				tuplaOrigem.nuvem = nuvemOrigem;
+				tuplaOrigem.host = hostOrigem;
+				tuplaOrigem.vm = vmOrigem;
+				
+				if(!ValidateService.existeVM(tuplaOrigem, space)) {
+					space.write(tuplaOrigem, null, TEMPO_VIDA_TUPLA);
 				}
 			
 				JOptionPane.showMessageDialog(tela, "Processo transferido com sucesso!");
 				
 			} else {
 				JOptionPane.showMessageDialog(tela, "O processo de origem ou a VM de destino não foi encontrado ou não existe. Verifique os nomes e tente novamente.");
+				throw new FalhaException("Processo e/ou VM não existente");
 			}
+		
 		} else {
 			JOptionPane.showMessageDialog(tela, "Digite um nome válido para o processo e/ou VM. Ex.: Processo->nuvem.host.vm.processo; VM->nuvem.host.vm");
+			throw new FalhaException("Nome do Processo e/ou da VM inválido");
 		}
 	}
 }

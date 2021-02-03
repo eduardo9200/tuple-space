@@ -16,7 +16,7 @@ public class TuplasTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	
 	private List<Space> dados = new ArrayList<Space>(); //Linhas
-	private String[] colunas = {"#", "Nuvem", "Host", "VM", "Produto", "Mensagem"}; //Colunas
+	private String[] colunas = {"#", "Nuvem", "Host", "VM", "Processo", "Mensagem"}; //Colunas
 
 	@Override
 	public int getRowCount() {
@@ -52,7 +52,7 @@ public class TuplasTableModel extends AbstractTableModel {
 				return processo == null ? "-" : processo.nome;
 			case 5:
 				Processo p = dados.get(rowIndex).processo;
-				return p == null ? "-" : p.mensagem;
+				return p == null ? "-" : ((p.mensagem == null || p.mensagem.isEmpty()) ? "-" : p.mensagem);
 			default:
 				return null;
 		}

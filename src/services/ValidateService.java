@@ -14,7 +14,7 @@ public class ValidateService {
 	public static final int PARTES_VM = 3;
 	public static final int PARTES_PROCESSO = 4;
 	
-	private static final long TEMPO_MAX_ESPERA_LEITURA = 10_000; //10 seconds;
+	private static final long TEMPO_MAX_ESPERA_LEITURA = 15_000; //15 seconds;
 
 	public static boolean existeNuvem(Space template, JavaSpace space) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
 		Space novoTemplate = new Space();

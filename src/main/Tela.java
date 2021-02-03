@@ -6,44 +6,33 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import exception.FalhaException;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
 import services.ReloadSpaceService;
 import services.Service;
-import tupla.Host;
-import tupla.Nuvem;
-import tupla.Processo;
 import tupla.Space;
-import tupla.VirtualMachine;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
-import java.awt.BorderLayout;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
 
 public class Tela extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JavaSpace space;
-	private List<Nuvem> nuvens;
 	
 	TuplasTableModel tableModel = new TuplasTableModel();
 	
@@ -55,6 +44,9 @@ public class Tela extends JFrame {
 	private JLabel lblMover;
 	private JLabel lblLog;
 	private JLabel lblNewLabel;
+	private JLabel lblAtualizaTabela;
+	private JLabel lblInfo;
+	private JLabel lblEntreProcessos;
 	
 	private JButton btnNewNuvem;
 	private JButton btnNewHost;
@@ -68,20 +60,19 @@ public class Tela extends JFrame {
 	private JButton btnMoverVM;
 	private JButton btnMoverProcesso;
 	private JButton btnAtualizar;
+	private JButton btnNewMessage;
 	
-	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
-	
-	private JTextArea textArea;
 	private JTable table;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Tela frame = new Tela();
 		frame.setVisible(true);
 		frame.instanciaEspacoTupla();
+		frame.atualizarTabela();
 		/*EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -90,15 +81,15 @@ public class Tela extends JFrame {
 					e.printStackTrace();
 				}
 			}
-		});*/
-	}
+		});
+	}*/
 
 	/**
 	 * Create the frame.
 	 */
 	public Tela() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 750, 560);
+		setBounds(100, 100, 535, 560);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -107,7 +98,7 @@ public class Tela extends JFrame {
 		this.initComponents();
 		this.initActions();
 		
-		this.habilitaBotoes(true);
+		this.habilitaBotoes(false);
 	}
 	
 	private void initComponents() {
@@ -167,14 +158,6 @@ public class Tela extends JFrame {
 		btnMoverProcesso.setBounds(292, 175, 89, 23);
 		contentPane.add(btnMoverProcesso);
 		
-		scrollPane = new JScrollPane();
-		scrollPane.setBounds(522, 228, 203, 247);
-		contentPane.add(scrollPane);
-		
-		textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
-		textArea.setLineWrap(true);
-		
 		lblLog = new JLabel("");
 		lblLog.setForeground(Color.MAGENTA);
 		lblLog.setBounds(10, 41, 414, 20);
@@ -187,7 +170,7 @@ public class Tela extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		btnAtualizar = new JButton("Atualizar");
-		btnAtualizar.setBounds(335, 486, 89, 23);
+		btnAtualizar.setBounds(408, 475, 89, 23);
 		contentPane.add(btnAtualizar);
 		
 		panelTabela = new JPanel();
@@ -206,6 +189,23 @@ public class Tela extends JFrame {
 		
 		table.setModel(tableModel);
 		table.setAutoCreateRowSorter(true);
+		
+		lblAtualizaTabela = new JLabel("");
+		lblAtualizaTabela.setForeground(Color.MAGENTA);
+		lblAtualizaTabela.setBounds(20, 475, 193, 23);
+		contentPane.add(lblAtualizaTabela);
+		
+		lblInfo = new JLabel("");
+		lblInfo.setBounds(231, 475, 167, 23);
+		contentPane.add(lblInfo);
+		
+		btnNewMessage = new JButton("Nova Msg.");
+		btnNewMessage.setBounds(402, 92, 106, 23);
+		contentPane.add(btnNewMessage);
+		
+		lblEntreProcessos = new JLabel("Entre Processos");
+		lblEntreProcessos.setBounds(402, 67, 106, 14);
+		contentPane.add(lblEntreProcessos);
 	}
 	
 	private void initActions() {
@@ -275,6 +275,12 @@ public class Tela extends JFrame {
 			}
 		});
 		
+		btnNewMessage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnNewMessageActionPerformed(e);
+			}
+		});
+		
 		btnAtualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnAtualizarActionPerformed(e);
@@ -282,7 +288,7 @@ public class Tela extends JFrame {
 		});
 	}
 	
-	private void instanciaEspacoTupla() {
+	public void instanciaEspacoTupla() {
 		try {
 			this.lblLog.setText("Procurando pelo serviço JavaSpace...");
 			Lookup finder = new Lookup(JavaSpace.class);
@@ -324,10 +330,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Criando Nuvem...");
+			
 			Service.createNuvem(nomeNuvem, space, this);
-			this.nuvens.add(new Nuvem(nomeNuvem));
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Nuvem criada: " + nomeNuvem);
-		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException e1) {
+		
+		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha na criação da nuvem");
 			e1.printStackTrace();
 		}
 	}
@@ -341,9 +353,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Criando Host...");
+			
 			Service.createHost(nomeHost, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Host criado: " + nomeHost);
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha na criação do Host");
 			e1.printStackTrace();
 		}
 	}
@@ -357,9 +376,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Criando VM...");
+			
 			Service.createVM(nomeVM, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("VM criada: " + nomeVM);
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha na criação da VM");
 			e1.printStackTrace();
 		}
 	}
@@ -373,9 +399,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Criando Processo...");
+			
 			Service.createProcesso(nomeProcesso, space, this);
+		
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Processo criado: " + nomeProcesso);
-		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha na criação do Processo");
 			e1.printStackTrace();
 		}
 	}
@@ -390,10 +423,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Removendo Nuvem...");
+			
 			Service.removeNuvem(nomeNuvem, space, this);
-			this.nuvens.remove(new Nuvem(nomeNuvem));
+		
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Nuvem removida: " + nomeNuvem);
-		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException e1) {
+		
+		} catch (RemoteException | TransactionException | HeadlessException | UnusableEntryException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao remover Nuvem...");
 			e1.printStackTrace();
 		}
 	}
@@ -407,9 +446,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Removendo Host...");
+			
 			Service.removeHost(nomeHost, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Host removido: " + nomeHost);
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | HeadlessException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao remover Host...");
 			e1.printStackTrace();
 		}
 	}
@@ -423,9 +469,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Removendo VM...");
+			
 			Service.removeVM(nomeVM, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("VM removida: " + nomeVM);
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | HeadlessException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao remover VM");
 			e1.printStackTrace();
 		}
 	}
@@ -439,9 +492,15 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Removendo Processo...");
+			
 			Service.removeProcesso(nomeProcesso, space, this);
+		
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Processo removido: " + nomeProcesso);
-		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		} catch (HeadlessException | RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao remover Processo");
 			e1.printStackTrace();
 		}
 	}
@@ -456,9 +515,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Movendo Host...");
+			
 			Service.moveHost(nomeHostOrigem, nomeHostDestino, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Host movido com sucesso!");
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao mover Host");
 			e1.printStackTrace();
 		}
 	}
@@ -473,9 +539,16 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Movendo VM...");
+			
 			Service.moveVM(nomeVMOrigem, nomeVMDestino, space, this);
+		
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("VM movida com sucesso!");
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao mover VM");
 			e1.printStackTrace();
 		}
 	}
@@ -490,18 +563,58 @@ public class Tela extends JFrame {
 		}
 		
 		try {
+			this.lblInfo.setText("Movendo Processo...");
+			
 			Service.moveProcesso(nomeProcessoOrigem, nomeProcessoDestino, space, this);
+		
+			this.lblInfo.setText("");
+			this.atualizarTabela();
 			System.out.println("Processo movido com sucesso!");
-		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | HeadlessException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao mover Processo");
+			e1.printStackTrace();
+		}
+	}
+	
+	private void btnNewMessageActionPerformed(ActionEvent e) {
+		System.out.println("Nova mensagem entre processos");
+		String remetente = JOptionPane.showInputDialog(this, "Processo remetente (nomeNuvem.nomeHost.nomeVM.nomeProcesso)", "Remetente", JOptionPane.QUESTION_MESSAGE);
+		String destinatario = JOptionPane.showInputDialog(this, "Processo destinatário (nomeNuvem.nomeHost.nomeVM)", "Destinatário", JOptionPane.QUESTION_MESSAGE);
+		String mensagem = JOptionPane.showInputDialog(this, "Mensagem", "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+		
+		if(remetente == null || remetente.isEmpty() || remetente.isBlank() ||
+		   destinatario == null || destinatario.isEmpty() || destinatario.isBlank() ||
+		   mensagem == null || mensagem.isEmpty() || mensagem.isBlank()
+		) {
+			return;
+		}
+		
+		try {
+			this.lblInfo.setText("Enviando mensagem...");
+			
+			Service.sendMessage(remetente, destinatario, mensagem, space, this);
+			
+			this.lblInfo.setText("");
+			this.atualizarTabela();
+		
+		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException | FalhaException e1) {
+			this.lblInfo.setText("Falha ao enviar mensagem");
 			e1.printStackTrace();
 		}
 	}
 	
 	private void btnAtualizarActionPerformed(ActionEvent e) {
+		this.atualizarTabela();
+	}
+	
+	public void atualizarTabela() {
 		try {
+			this.lblAtualizaTabela.setText("AGUARDE! Atualizando dados...");
+			
 			tableModel.clearAllRows();
 			
-			List<Space> todasTuplas = ReloadSpaceService.findAllTuples(nuvens, space);
+			List<Space> todasTuplas = ReloadSpaceService.findAllTuples(space);
 			
 			if(todasTuplas == null || todasTuplas.isEmpty())
 				return;
@@ -509,8 +622,10 @@ public class Tela extends JFrame {
 			for(Space tupla : todasTuplas) {
 				tableModel.addRow(tupla);
 			}
+			this.lblAtualizaTabela.setText("Dados atualizados");
 			
 		} catch (RemoteException | UnusableEntryException | TransactionException | InterruptedException e1) {
+			this.lblAtualizaTabela.setText("Falha ao atualizar dados: " + e1.getMessage());
 			e1.printStackTrace();
 		}
 	}
@@ -529,5 +644,9 @@ public class Tela extends JFrame {
 		this.btnMoverHost.setEnabled(b);
 		this.btnMoverVM.setEnabled(b);
 		this.btnMoverProcesso.setEnabled(b);
+		
+		this.btnNewMessage.setEnabled(b);
+		
+		this.btnAtualizar.setEnabled(b);
 	}
 }

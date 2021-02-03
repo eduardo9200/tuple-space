@@ -1,15 +1,17 @@
 package services;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import exception.FalhaException;
 import main.Tela;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
 import tupla.Host;
+import tupla.Mensagem;
 import tupla.Nuvem;
 import tupla.Processo;
 import tupla.Space;
@@ -17,9 +19,9 @@ import tupla.VirtualMachine;
 
 public class MessagingService {
 
-	public static void messagingBetweenProcess(String from, String to, String mensagem, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException {
-		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem'];
-		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino'];
+	public static void sendMessage(String from, String to, String mensagem, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem', 3=>'nomeProcessoOrigem'];
+		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino', 2=>'nomeVMDestino', 3=>'nomeProcessoDestino'];
 		
 		if(ValidateService.validaPartes(from, ValidateService.PARTES_PROCESSO) && ValidateService.validaPartes(to, ValidateService.PARTES_PROCESSO)) {
 			//Origem
@@ -60,21 +62,24 @@ public class MessagingService {
 			templateDestino.vm = vmDestino;
 			templateDestino.processo = processoDestino;
 			
-			if(ValidateService.existeProcesso(templateOrigem, space) && ValidateService.existeProcesso(templateDestino, space) && pertenceAMesmaVM(templateOrigem, templateDestino)) {
-				//Space tuplaOrigem = (Space) space.take(templateOrigem, null, Lease.FOREVER);
-				Space tuplaDestino = (Space) space.take(templateDestino, null, Lease.FOREVER);
-								
-				//tuplaDestino.processo.mensagem = tuplaOrigem.processo.mensagem;
-				
-				tuplaDestino.processo.mensagem = mensagem;
-				space.write(tuplaDestino, null, 10_000);
+			if(ValidateService.existeProcesso(templateOrigem, space) && pertenceAMesmaVM(templateOrigem, templateDestino)) {
+				Mensagem templateMensagem = new Mensagem();
+				templateMensagem.remetente = templateOrigem;
+				templateMensagem.destinatario = templateDestino;
+				templateMensagem.mensagem = mensagem;
+			
+				space.write(templateMensagem, null, Lease.FOREVER);
+			
+			} else {
+				JOptionPane.showMessageDialog(tela, "Processo remetente não existente ou o remetente e destinatário não pertencem à mesma VM.");
+				throw new FalhaException("Remetente não existe ou os processos não estão na mesma VM.");
 			}
 		}
 	}
 	
-	private static boolean pertenceAMesmaVM(Space origem, Space destino) {
-		return origem.nuvem.equals(destino.nuvem)
-			&& origem.host.equals(destino.host)
-			&& origem.vm.equals(destino.vm);
+	public static boolean pertenceAMesmaVM(Space origem, Space destino) {
+		return origem.nuvem.nome.equals(destino.nuvem.nome)
+			&& origem.host.nome.equals(destino.host.nome)
+			&& origem.vm.nome.equals(destino.vm.nome);
 	}
 }
