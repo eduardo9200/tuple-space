@@ -4,6 +4,10 @@ import net.jini.space.JavaSpace;
 import tupla.Space;
 import view.View;
 
+/*
+ * Classe depreciada. Não está sendo utilizada.
+ * */
+@Deprecated
 public class ReadMessage {
 
 	public static void main(String[] args) {

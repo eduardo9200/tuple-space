@@ -19,23 +19,36 @@ import tupla.Processo;
 import tupla.Space;
 import tupla.VirtualMachine;
 
+/*
+ * Classe responsável por remover tuplas existentes do espaço
+ * */
 public class RemoveService {
 	
-	public static final long TEMPO_MAX_REMOCAO = 5_000; //5 seg.
+	public static final long TEMPO_MAX_REMOCAO = 10_000; //10 seg.
 	public static final long TEMPO_VIDA_TUPLA= Lease.FOREVER;
 
+	/*
+	 * Remove uma nuvem do espaço
+	 * 
+	 * @param nome nome da nuvem no formato nomeNuvem
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void removeNuvem(String nome, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Valida o nome da nuvem
 		if(!ValidateService.validaPartes(nome, ValidateService.PARTES_NUVEM)) {
 			JOptionPane.showMessageDialog(tela, "Digite um nome válido. Ex.: nuvem1, nuvem2, ...");
 			throw new FalhaException("Nome nuvem inválido");
 		}
 		
+		//Cria template
 		Nuvem nuvem = new Nuvem();
 		nuvem.nome = nome;
 		
 		Space template = new Space();
 		template.nuvem = nuvem;
 		
+		//Se a nuvem existe e ela não possui hosts, então poderá ser removida do espaço. Caso contrário, será lançado erro.
 		if(ValidateService.existeNuvem(template, space)) {
 			List<Space> nuvemList = new ArrayList<Space>();
 			
@@ -50,6 +63,7 @@ public class RemoveService {
 					existeHost = Boolean.FALSE;
 			}
 			
+			//Se ainda existirem hosts na nuvem, então ela é devolvida para o espaço, já que havia sido removida através do take
 			if(!nuvemList.isEmpty() && nuvemList.size() == 1 && nuvemList.get(0).vm != null) {
 				devolverTemplatesParaOEspaco(nuvemList, space);
 					
@@ -75,16 +89,26 @@ public class RemoveService {
 		}
 	}
 	
+	/*
+	 * Remove um host de uma nuvem
+	 * 
+	 * @param caminhoComNome nome do host no formato nomeNuvem.nomeHost
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void removeHost(String caminhoComNome, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra o nome para separar os nomes da nuvem e do host
 		String[] partes = caminhoComNome != null
 				? caminhoComNome.split("\\.") //[0=>'nomeNuvem', 1=>'nomeHost']
 				: new String[]{};
 
+		//Valida o nome do host para saber se atende ao padrão de nome de host
 		if(!ValidateService.validaPartes(caminhoComNome, ValidateService.PARTES_HOST)) {
 			JOptionPane.showMessageDialog(tela, "Digite um nome de Host válido, no formato 'nuvem.host' (sem aspas). Ex.: nuvem1.host2, nuvem2.host2, ...");
 			throw new FalhaException("Nome host inválido");
 		}
 		
+		//Cria o template
 		Nuvem nuvem = new Nuvem();
 		nuvem.nome = partes[0];
 		
@@ -95,6 +119,7 @@ public class RemoveService {
 		template.nuvem = nuvem;
 		template.host = host;
 		
+		//Se o host existe e não possui VM's, então ele é removido do espaço. Caso contrário, será lançado um erro.
 		if(ValidateService.existeHost(template, space)) {
 			List<Space> hostList = new ArrayList<Space>();
 			
@@ -109,6 +134,7 @@ public class RemoveService {
 					existeVM = Boolean.FALSE;
 			}
 			
+			//Caso ainda hajam VM's, os hosts são devolvidos para o espaço, já que haviam sido removidos com o take
 			if(!hostList.isEmpty() && hostList.size() == 1 && hostList.get(0).vm != null) {
 				devolverTemplatesParaOEspaco(hostList, space);
 					
@@ -138,16 +164,26 @@ public class RemoveService {
 		}
 	}
 	
+	/*
+	 * Remove uma VM do espaço
+	 * 
+	 * @param caminhoComNome nome da VM no formato nomeNuvem.nomeHost.nomeVM
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void removeVM(String caminhoComNome, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra o nome da VM
 		String[] partes = caminhoComNome != null
 				? caminhoComNome.split("\\.") //[0=>'nomeNuvem', 1=>'nomeHost', 2=>'nomeVM']
 				: new String[]{};
 
+		//Valida o nome da VM para saber se ela atende ao padrão do nome de VM
 		if(!ValidateService.validaPartes(caminhoComNome, ValidateService.PARTES_VM)) {
 			JOptionPane.showMessageDialog(tela, "Digite um nome de VM válido, no formato 'nuvem.host.vm' (sem aspas). Ex.: nuvem1.host2.vm3, nuvem2.host2.vm2, ...");
 			throw new FalhaException("Nome VM inválido");
 		}
 		
+		//Cria o template
 		Nuvem nuvem = new Nuvem();
 		nuvem.nome = partes[0];
 		
@@ -162,6 +198,7 @@ public class RemoveService {
 		template.host = host;
 		template.vm = vm;
 		
+		//Se existir VM e ela não possuir processos, então será removida do espaço. Caso contrário, será lançado um erro.
 		if(ValidateService.existeVM(template, space)) {
 			List<Space> vmList = new ArrayList<Space>();
 			
@@ -176,6 +213,7 @@ public class RemoveService {
 					existeProcesso = Boolean.FALSE;
 			}
 			
+			//Se existirem processos na VM, então ela será devolvida ao espaço, já que havia sido removida com o take
 			if(!vmList.isEmpty() && vmList.size() == 1 && vmList.get(0).processo != null) {
 				devolverTemplatesParaOEspaco(vmList, space);
 					
@@ -205,16 +243,26 @@ public class RemoveService {
 		}
 	}
 	
+	/*
+	 * Remove um processo do espaço de tupla
+	 * 
+	 * @param caminhoComNome nome do processo no formato nomeNuvem.nomeHost.nomeVM.nomeProcesso
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void removeProcesso(String caminhoComNome, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra o nome do processo
 		String[] partes = caminhoComNome != null
 						? caminhoComNome.split("\\.")
 						: new String[]{};
 		
+		//Valida o nome do processo para saber se atende ao padrão do nome do processo
 		if(!ValidateService.validaPartes(caminhoComNome, ValidateService.PARTES_PROCESSO)) {
 			JOptionPane.showMessageDialog(tela, "Digite um nome de processo válido, no formato 'nuvem.host.vm.processo' (sem aspas). Ex.: nuvemA.hostA.vmB.processoC, ...");
 			throw new FalhaException("Nome processo inválido");
 		}
 		
+		//Cria o template
 		Nuvem nuvem = new Nuvem();
 		nuvem.nome = partes[0];
 		
@@ -233,6 +281,7 @@ public class RemoveService {
 		template.vm = vm;
 		template.processo = processo;
 		
+		//Se existe processo, então ele será removido. Caso contrário, é lançado erro.
 		if(ValidateService.existeProcesso(template, space)) {
 			space.take(template, null, TEMPO_MAX_REMOCAO);
 			
@@ -249,6 +298,12 @@ public class RemoveService {
 		}
 	}
 	
+	/*
+	 * Devolve uma lista de templates previamente removidos para o espaço de tuplas.
+	 * 
+	 * @param tuplas a lista de tuplas do tipo Space a ser devolvida para o espaço
+	 * @param space o espaço de tuplas que receberá a lista de tuplas
+	 * */
 	private static void devolverTemplatesParaOEspaco(List<Space> tuplas, JavaSpace space) throws RemoteException, TransactionException {
 		if(tuplas != null && !tuplas.isEmpty()) {
 			for(Space t : tuplas) {

@@ -4,6 +4,10 @@ import java.util.Scanner;
 
 import net.jini.space.JavaSpace;
 
+/*
+ * Classe depreciada. Não está sendo utilizada.
+ * */
+@Deprecated
 public class WriteMessage {
 
 	public static void main(String[] args) {

@@ -2,6 +2,10 @@ package view;
 
 import javax.swing.JFrame;
 
+/*
+ * Classe depreciada. Não está sendo utilizada.
+ * */
+@Deprecated
 public class View extends JFrame {
 
 	private static final long serialVersionUID = 1L;

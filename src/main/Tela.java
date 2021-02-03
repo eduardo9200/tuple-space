@@ -288,6 +288,9 @@ public class Tela extends JFrame {
 		});
 	}
 	
+	/*
+	 * Busca um espaço de tupla que esteja executando
+	 * */
 	public void instanciaEspacoTupla() {
 		try {
 			this.lblLog.setText("Procurando pelo serviço JavaSpace...");
@@ -321,6 +324,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que cria a nuvem no espaço
+	 * */
 	private void btnNewCloudActionPerformed(ActionEvent e) {
 		System.out.println("Inserindo Nuvem");
 		String nomeNuvem = JOptionPane.showInputDialog(this, "Nome da Nuvem", "Nuvem", JOptionPane.QUESTION_MESSAGE);
@@ -344,6 +350,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que cria o host no espaço
+	 * */
 	private void btnNewHostActionPerformed(ActionEvent e) {
 		System.out.println("Insere Host");
 		String nomeHost = JOptionPane.showInputDialog(this, "Nome do Host", "Host", JOptionPane.QUESTION_MESSAGE);
@@ -367,6 +376,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que cria a VM no espaço
+	 * */
 	private void btnNewVMActionPerformed(ActionEvent e) {
 		System.out.println("Insere VM");
 		String nomeVM = JOptionPane.showInputDialog(this, "Nome da VM", "VM", JOptionPane.QUESTION_MESSAGE);
@@ -390,6 +402,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que cria o processo no espaço
+	 * */
 	private void btnNewProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Insere Processo");
 		String nomeProcesso = JOptionPane.showInputDialog(this, "Nome do Processo", "Processo", JOptionPane.QUESTION_MESSAGE);
@@ -413,6 +428,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que remove a nuvem do espaço
+	 * */
 	private void btnRemoveNuvemActionPerformed(ActionEvent e) {
 		System.out.println("Remove Nuvem");
 		
@@ -437,6 +455,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que remove o host do espaço
+	 * */
 	private void btnRemoveHostActionPerformed(ActionEvent e) {
 		System.out.println("Remove Host");
 		String nomeHost = JOptionPane.showInputDialog(this, "Nome do Host", "Host", JOptionPane.QUESTION_MESSAGE);
@@ -460,6 +481,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que remove a VM do espaço
+	 * */
 	private void btnRemoveVMActionPerformed(ActionEvent e) {
 		System.out.println("Remove VM");
 		String nomeVM = JOptionPane.showInputDialog(this, "Nome da VM", "VM", JOptionPane.QUESTION_MESSAGE);
@@ -483,6 +507,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que remove o processo do espaço
+	 * */
 	private void btnRemoveProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Remove Processo");
 		String nomeProcesso = JOptionPane.showInputDialog(this, "Nome do Processo", "Processo", JOptionPane.QUESTION_MESSAGE);
@@ -505,6 +532,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que migra hosts entre nuvens
+	 * */
 	private void btnMoverHostActionPerformed(ActionEvent e) {
 		System.out.println("Mover Host");
 		String nomeHostOrigem = JOptionPane.showInputDialog(this, "Nome do host de origem (nomeNuvem.nomeHost)", "Host origem", JOptionPane.QUESTION_MESSAGE);
@@ -529,6 +559,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que migra VM's entre hosts
+	 * */
 	private void btnMoverVMActionPerformed(ActionEvent e) {
 		System.out.println("Mover VM");
 		String nomeVMOrigem = JOptionPane.showInputDialog(this, "Nome da VM de origem (nomeNuvem.nomeHost.nomeVM)", "VM origem", JOptionPane.QUESTION_MESSAGE);
@@ -553,6 +586,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que migra processos entre VM's
+	 * */
 	private void btnMoverProcessoActionPerformed(ActionEvent e) {
 		System.out.println("Mover Processo");
 		String nomeProcessoOrigem = JOptionPane.showInputDialog(this, "Nome do processo de origem (nomeNuvem.nomeHost.nomeVM.nomeProcesso)", "Processo origem", JOptionPane.QUESTION_MESSAGE);
@@ -577,6 +613,9 @@ public class Tela extends JFrame {
 		}
 	}
 	
+	/*
+	 * Realiza a chamada do serviço que troca mensagens entre processos da mesma VM
+	 * */
 	private void btnNewMessageActionPerformed(ActionEvent e) {
 		System.out.println("Nova mensagem entre processos");
 		String remetente = JOptionPane.showInputDialog(this, "Processo remetente (nomeNuvem.nomeHost.nomeVM.nomeProcesso)", "Remetente", JOptionPane.QUESTION_MESSAGE);
@@ -608,6 +647,9 @@ public class Tela extends JFrame {
 		this.atualizarTabela();
 	}
 	
+	/*
+	 * Atualiza os dados da tabela de acordo com as tuplas existentes no espaço, exceto as tuplas de troca de mensagens
+	 * */
 	public void atualizarTabela() {
 		try {
 			this.lblAtualizaTabela.setText("AGUARDE! Atualizando dados...");

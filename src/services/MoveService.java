@@ -20,27 +20,33 @@ import tupla.Processo;
 import tupla.Space;
 import tupla.VirtualMachine;
 
+/*
+ * Classe responsável por migrar hosts, VM's e processos
+ * */
 public class MoveService {
 	
 	private static final long TEMPO_VIDA_TUPLA = Lease.FOREVER;
 	private static final long TEMPO_MAX_LEITURA = 5_000; //5 seg.
 	
 	/**
+	 * Move um host para uma nuvem destino
 	 * 
 	 * @param from caminho do host o qual se quer mover, no formato nomeNuvem.nomeHost
-	 * @param to nome da nuvem que receberá o host movido
-	 * @param space 
-	 * @param tela
+	 * @param to nome da nuvem que receberá o host movido, no formato nomeNuvem
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
 	 */
 	public static void moveHost(String from, String to, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra os nomes de from e to
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino'];
 		
 		List<Space> templateListOrig = new ArrayList<Space>();
 		String novoNomeHost = ""; //Novo nome do host que vem do destino para a origem, caso seja necessário alterar.
 		
+		//Faz a validação dos nomes do host de origem e nuvem de destino, para saber se estão dentro do padrão
 		if(ValidateService.validaPartes(from, ValidateService.PARTES_HOST) && ValidateService.validaPartes(to, ValidateService.PARTES_NUVEM)) {
-			//Criação do template de Origem
+			//Criação do template de origem
 			Nuvem nuvemOrigem = new Nuvem();
 			nuvemOrigem.nome = partesOrigem[0];
 			
@@ -78,6 +84,7 @@ public class MoveService {
 				templateAux.nuvem = nuvemDestino;
 				templateAux.host = hostOrigem;
 				
+				//Atualiza o nome do host, caso tenha o mesmo nome de um host existente dentro da nuvem
 				if(ValidateService.existeHost(templateAux, space)) {
 					String mensagem = "A nuvem " + templateAux.nuvem.nome + " já possui um host denominado " + templateAux.host.nome + ". Modifique o host name.";
 					novoNomeHost = JOptionPane.showInputDialog(tela, mensagem, "Host", JOptionPane.WARNING_MESSAGE);	
@@ -120,7 +127,16 @@ public class MoveService {
 		}
 	}
 	
+	/*
+	 * Move uma VM para um host destino
+	 * 
+	 * @param from caminho do host o qual se quer mover, no formato nomeNuvem.nomeHost
+	 * @param to nome da nuvem que receberá o host movido, no formato nomeNuvem
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void moveVM(String from, String to, JavaSpace space, Tela tela) throws RemoteException, TransactionException, UnusableEntryException, InterruptedException, FalhaException {
+		//Quebra os nomes de from e to
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino'];
 		
@@ -175,6 +191,7 @@ public class MoveService {
 				templateAux.host = hostDestino;
 				templateAux.vm = vmOrigem;
 				
+				//Atualiza o nome da VM, caso seja necessário
 				if(ValidateService.existeVM(templateAux, space)) {
 					String mensagem = "O host " + templateAux.host.nome + " já possui uma VM denominada " + templateAux.vm.nome + ". Modifique o nome da VM.";
 					novoNomeVM = JOptionPane.showInputDialog(tela, mensagem, "Virtual Machine", JOptionPane.WARNING_MESSAGE);	
@@ -218,7 +235,16 @@ public class MoveService {
 		}
 	}
 
+	/*
+	 * Move um processo para uma VM destino
+	 * 
+	 * @param from caminho do host o qual se quer mover, no formato nomeNuvem.nomeHost
+	 * @param to nome da nuvem que receberá o host movido, no formato nomeNuvem
+	 * @param space espaço onde estão as tuplas
+	 * @param tela referência à tela do sistema
+	 * */
 	public static void moveProcesso(String from, String to, JavaSpace space, Tela tela) throws HeadlessException, RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra os nomes de from e to
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem', 3=>'nomeProcessoOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino', 2=>'nomeVMDestino'];
 		
@@ -282,6 +308,7 @@ public class MoveService {
 				templateAux.vm = vmDestino;
 				templateAux.processo = processoOrigem;
 				
+				//Atualiza o nome do processo, caso seja necessário
 				if(ValidateService.existeProcesso(templateAux, space)) {
 					String mensagem = "A VM " + templateAux.vm.nome + " já possui um processo denominado " + templateAux.processo.nome + ". Modifique o nome do processo.";
 					novoNomeProcesso = JOptionPane.showInputDialog(tela, mensagem, "Processo", JOptionPane.WARNING_MESSAGE);	

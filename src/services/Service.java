@@ -9,6 +9,9 @@ import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.TransactionException;
 import net.jini.space.JavaSpace;
 
+/*
+ * Classe auxiliar, responsável por redirecionar as chamadas das funções na tela do sistema aos serviços corretos
+ * */
 public class Service {
 	
 	//CREATE METHODS

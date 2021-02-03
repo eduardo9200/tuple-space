@@ -19,12 +19,23 @@ import tupla.VirtualMachine;
 
 public class MessagingService {
 
+	/*
+	 * Escreve uma mensagem no espaço para ser lida por um processo
+	 * 
+	 * @param from caminho do remetente no formato nomeNuvem.nomeHost.nomeVM.nomeProcesso
+	 * @param to caminho do destinatário no formato nomeNuvem.nomeHost.nomeVM.nomeProcesso
+	 * @param mensagem mensagem enviada do remetente ao destinatário
+	 * @param space espaço onde a tupla de mensagem será escrita
+	 * @param tela referência à tela onde o sistema está sendo executado
+	 * */
 	public static void sendMessage(String from, String to, String mensagem, JavaSpace space, Tela tela) throws RemoteException, UnusableEntryException, TransactionException, InterruptedException, FalhaException {
+		//Quebra from e to para separar os nomes da nuvem, host, VM e processo
 		String[] partesOrigem = from.split("\\."); //[0=>'nomeNuvemOrigem', 1=>'nomeHostOrigem', 2=>'nomeVMOrigem', 3=>'nomeProcessoOrigem'];
 		String[] partesDestino = to.split("\\."); //[0=>'nomeNuvemDestino', 1=>'nomeHostDestino', 2=>'nomeVMDestino', 3=>'nomeProcessoDestino'];
 		
+		//Valida from e to para saber se estão de acordo com o padrão do nome de processo
 		if(ValidateService.validaPartes(from, ValidateService.PARTES_PROCESSO) && ValidateService.validaPartes(to, ValidateService.PARTES_PROCESSO)) {
-			//Origem
+			//Cria o template do remetente
 			Nuvem nuvemOrigem = new Nuvem();
 			nuvemOrigem.nome = partesOrigem[0];
 			
@@ -43,7 +54,7 @@ public class MessagingService {
 			templateOrigem.vm = vmOrigem;
 			templateOrigem.processo = processoOrigem;
 			
-			//Destino
+			//Cria o template do destinatário
 			Nuvem nuvemDestino = new Nuvem();
 			nuvemDestino.nome = partesDestino[0];
 			
@@ -62,12 +73,16 @@ public class MessagingService {
 			templateDestino.vm = vmDestino;
 			templateDestino.processo = processoDestino;
 			
+			//Valida se o remetente existe e se pertence à mesma VM do destinatário e escreve a tupla de mensagem no espaço.
+			//Obs.: não é necessário o destinatário existir para ser enviada uma mensagem, pois quando existir, ele receberá essa mensagem.
 			if(ValidateService.existeProcesso(templateOrigem, space) && pertenceAMesmaVM(templateOrigem, templateDestino)) {
+				//Cria o template da tupla de mensagem
 				Mensagem templateMensagem = new Mensagem();
 				templateMensagem.remetente = templateOrigem;
 				templateMensagem.destinatario = templateDestino;
 				templateMensagem.mensagem = mensagem;
 			
+				//Insere a mensagem no espaço de tuplas
 				space.write(templateMensagem, null, Lease.FOREVER);
 			
 			} else {
@@ -77,6 +92,9 @@ public class MessagingService {
 		}
 	}
 	
+	/*
+	 * Valida para saber se dois processos estão dentro da mesma VM
+	 * */
 	public static boolean pertenceAMesmaVM(Space origem, Space destino) {
 		return origem.nuvem.nome.equals(destino.nuvem.nome)
 			&& origem.host.nome.equals(destino.host.nome)

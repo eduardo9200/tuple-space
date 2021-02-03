@@ -11,6 +11,9 @@ import tupla.Processo;
 import tupla.Space;
 import tupla.VirtualMachine;
 
+/*
+ * Classe auxiliar para gerenciar o layout e o comportamento da tabela presente na tela do sistema
+ * */
 public class TuplasTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
